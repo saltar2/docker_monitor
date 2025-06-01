@@ -1,4 +1,4 @@
-# services:
+services:
 #   alloy:
 #     image: grafana/alloy:${GRAFANA_ALLOY_VERSION:-v1.8.2}
 #     ports:
@@ -29,7 +29,7 @@
       - "3100:3100"
     volumes:
      - ./loki-config.yaml:/etc/loki/local-config.yaml:ro
-     - ./tmp/loki:/tmp/loki
+     - ./tmp/loki:/tmp/loki:rw
     command: -config.file=/etc/loki/local-config.yaml
 
 
@@ -54,30 +54,12 @@
       - GF_AUTH_BASIC_ENABLED=false
     ports:
       - 3000:3000/tcp
+    volumes:
+      - ./provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./dashboards:/var/lib/grafana/dashboards
     entrypoint:
-        - sh
-        - -euc
-        - |
-          mkdir -p /etc/grafana/provisioning/datasources
-          cat <<EOF > /etc/grafana/provisioning/datasources/ds.yaml
-          apiVersion: 1
-          datasources:
-          - name: Loki
-            type: loki
-            access: proxy
-            orgId: 1
-            url: http://loki:3100
-            basicAuth: false
-            isDefault: false
-            version: 1
-            editable: false
-          - name: Prometheus
-            type: prometheus
-            orgId: 1
-            url: http://prometheus:9090
-            basicAuth: false
-            isDefault: true
-            version: 1
-            editable: false
-          EOF
-          /run.sh
+      - sh
+      - -euc
+      - |
+        /run.sh

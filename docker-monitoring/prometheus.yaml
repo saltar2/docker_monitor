@@ -1,0 +1,16 @@
+global:
+  scrape_interval: 10s
+
+scrape_configs:
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080'] # cambiar cadvisor por ip real de ec2 y en caso de haber varios targets pues mas ips
+  # - job_name: docker
+  #     metrics_path defaults to '/metrics'
+  #     scheme defaults to 'http'.
+
+  #   static_configs:
+  #     - targets: ["host.docker.internal:9323"]
+
+  #     https://docs.docker.com/engine/daemon/prometheus/
+  #     https://prometheus.io/docs/guides/dockerswarm/

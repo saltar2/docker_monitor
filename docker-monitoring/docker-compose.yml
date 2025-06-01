@@ -1,0 +1,49 @@
+#version: '3'
+
+
+services:
+  alloy:
+    image: grafana/alloy:${GRAFANA_ALLOY_VERSION:-v1.8.2}
+    # ports:
+    #   # - 12345:12345
+    #   - 4317:4317
+    #   - 4318:4318
+    volumes:
+      - ./config.alloy:/etc/alloy/config.alloy
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: run --server.http.listen-addr=0.0.0.0:12345 --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.49.2
+    ports:
+      - "8080:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+      - /var/run:/var/run:rw
+    restart: unless-stopped
+
+
+
+  ### 🔥 Servicios que generan carga de trabajo:
+
+
+  flog:
+    image: mingrammer/flog
+    command: -f json -d 10ms -l
+    deploy:
+      replicas: 30
+
+  cpu_stress:
+    image: alpine
+    command: ["sh", "-c", "apk add --no-cache stress-ng && stress-ng --cpu 1 --timeout 600s"]
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+
+
+
+

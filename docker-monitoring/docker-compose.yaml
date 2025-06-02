@@ -4,8 +4,8 @@
 services:
   alloy:
     image: grafana/alloy:${GRAFANA_ALLOY_VERSION:-v1.8.2}
-    # ports:
-    #   # - 12345:12345
+    ports:
+      - 12345:12345
     #   - 4317:4317
     #   - 4318:4318
     volumes:
@@ -35,14 +35,14 @@ services:
     image: mingrammer/flog
     command: -f json -d 10ms -l
     deploy:
-      replicas: 30
+      replicas: 3
 
-  cpu_stress:
-    image: alpine
-    command: ["sh", "-c", "apk add --no-cache stress-ng && stress-ng --cpu 1 --timeout 600s"]
-    restart: unless-stopped
-    deploy:
-      replicas: 1
+  # cpu_stress:
+  #   image: alpine
+  #   command: ["sh", "-c", "apk add --no-cache stress-ng && stress-ng --cpu 1 --timeout 600s"]
+  #   restart: unless-stopped
+  #   deploy:
+  #     replicas: 1
 
 
 

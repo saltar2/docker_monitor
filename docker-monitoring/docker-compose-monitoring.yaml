@@ -29,7 +29,7 @@ services:
       - "3100:3100"
     volumes:
      - ./loki-config.yaml:/etc/loki/local-config.yaml:ro
-     - ./tmp/loki:/tmp/loki:rw
+     - ./tmp/loki:/tmp/loki
     command: -config.file=/etc/loki/local-config.yaml
 
 
